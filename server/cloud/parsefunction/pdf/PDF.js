@@ -38,7 +38,7 @@ const serverUrl = cloudServerUrl; // process.env.SERVER_URL;
 const APPID = serverAppId;
 const masterKEY = process.env.MASTER_KEY;
 const eSignName = 'HexSign';
-const eSigncontact = 'hello@opensignlabs.com';
+const eSigncontact = 'info@rapidlodge.com.au';
 const docUrl = `${serverUrl}/classes/contracts_Document`;
 const headers = {
   'Content-Type': 'application/json',

@@ -30,6 +30,9 @@ Font Awesome comes from `https://cdn.opensignlabs.com/fonts.css` (FA Pro 6). Onl
 | `cloud/parsefunction/pdf/PDF.js` | `eSignName = 'OpenSign'` → `'HexSign'` → certificate reads "Digitally signed by HexSign." |
 | `cloud/parsefunction/generateCertificatebydocId.js` | same `eSignName` change |
 | `cloud/parsefunction/pdf/GenerateLocationMap.js` | tile user-agent `RapidLodgements-OpenSign/1.0` → `RapidLodgements-HexSign/1.0` |
+| `cloud/parsefunction/pdf/PDF.js` + `generateCertificatebydocId.js` | certificate signature `ContactInfo` `hello@opensignlabs.com` → `info@rapidlodge.com.au` |
+| `cloud/customRoute/docxtopdf.js` | user-facing DOCX error text `support@opensignlabs.com` → `info@rapidlodge.com.au` |
+| `cloud/parsefunction/Newsletter.js` | upstream call-home `app.opensignlabs.com/api/app` → `esign.rapidlodge.com.au/api/app` |
 
 Backups of pre-change files exist next to each as `*.bak-beforehexsign`, and inside
 `/home/superuser/esign-patches/hexsign-rebrand-*/`.
