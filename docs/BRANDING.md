@@ -26,6 +26,10 @@ Font Awesome comes from `https://cdn.opensignlabs.com/fonts.css` (FA Pro 6). Onl
 |---|---|
 | `images/logo.png` | certificate/PDF logo (1158×396) — Rapid Lodgements mark |
 | `cloud/parsefunction/pdf/GenerateCertificate.js` | certificate layout with GPS location block + OpenStreetMap thumbnail (HEX_MAP_V4, navy `#112366`) |
+| `cloud/parsefunction/pdf/PDF.js` (owner + all-signed notices) | vendor banner `qikinnovation.ams3.digitaloceanspaces.com/logo.png` → our `hexsign-logo.png`; teal `#47a3ad` → navy `#112366` |
+| `cloud/parsefunction/ForwardDoc.js` | same banner + teal fix |
+| `cloud/parsefunction/declinedocument.js` | same banner + teal fix |
+| `cloud/parsefunction/SendMailOTPv1.js` | teal `#47a3ad` → navy `#112366`, stray `background-color:red` removed |
 | `Utils.js` | `appName` `'HexFlow'` → `'HexSign'` (feeds 10+ mail paths); mail-template logo → `hexsign-logo.png`; header bar `#47a3ad` → `#112366` |
 | `cloud/parsefunction/sendMailv3.js` | spam footer `OpenSign™` → `HexSign™`; complaint mail → `info@rapidlodge.com.au` |
 | `cloud/parsefunction/sendMailWithAttachment.js` | same footer change |
