@@ -67,10 +67,7 @@ curl -s https://sign.example.com/api/app/health    # expect 200
 
 ```bash
 git clone <this repo> hexsign && cd hexsign
-vi config/brand.env                                 # your brand, domain, support email, website, logo
-
-./scripts/rebrand.sh        # rewrites the overlay to your brand (no deployment)
-./scripts/apply.sh          # deploys: client build + server patches, restarts the API, verifies
+./scripts/apply.sh       # deploys the client build + server patches, restarts the API, verifies
 ```
 
 `apply.sh` will:
@@ -84,20 +81,21 @@ vi config/brand.env                                 # your brand, domain, suppor
 If anything goes wrong: restore the `apply-<stamp>` directory or `build.previous`, or simply re-run
 `apply.sh`.
 
----
+The branding is the product: it is not configurable, and there is no rebrand step by design (see
+[LICENSE](../LICENSE)).
 
 ## 4. Your own admin, tenant and logo
 
-These are **database records, not code** — which is why every install is its own:
+The platform identity stays HEXSign. What is yours is the **tenant**:
 
 1. Open `https://sign.example.com` and sign up — the **first account becomes the admin**.
 2. In **Settings → Tenants**, your tenant is created automatically with the admin as owner.
 3. Set the tenant **name**, **logo** (upload your mark — this is what appears in the app header and on
    the certificate), **request subject/body templates**, and your team members.
-4. Replace `server/images/logo.png` (via `CERT_LOGO` in `config/brand.env`) if you want a different
-   logo on the certificate PDF than the one in the app.
+4. The tenant logo you upload appears in the app header and on the certificate PDF; replace
+   `server/images/logo.png` only if you need a different certificate logo file.
 
-Nothing about the previous owner's business survives `rebrand.sh` + a fresh database.
+Tenant name, logo, templates and users are database records — per installation, never in this repo.
 
 ---
 
@@ -134,7 +132,7 @@ Read [`RUNBOOK.md`](RUNBOOK.md) before making changes, and note the two infrastr
 - [x] MongoDB (via compose)
 - [x] Reverse proxy route to the app
 - [x] This overlay for the branding
-- [ ] Your own logo files (SVG or ≥1200 px PNG, plus a square mark for the favicon)
+- [ ] Your organisation's logo for the tenant profile (uploaded in-app)
 
 Everything else the platform needs — application images, database, branding build, fonts, icons,
 scripts, stack definition and environment contract — is either public upstream or in this repository.

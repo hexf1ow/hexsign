@@ -1,0 +1,22 @@
+HEXSign — proprietary software and branding
+Copyright (c) 2026 Hex Flow. All rights reserved.
+
+The HEXSign platform branding — the name, the wordmark and logo files, the Arvo typography
+treatment, the footer, the icon colour scheme, the email and certificate layouts, and the
+accompanying scripts and documentation in this repository — is the property of Hex Flow.
+
+Permission is granted to deploy and operate this platform, and to customise ONLY the
+tenant-level identity inside the application (your organisation name, your tenant logo,
+your signer-facing message templates, your users and roles).
+
+You may NOT:
+  - remove, replace, obscure or alter the HEXSign name, logos or branding anywhere in the
+    platform, emails, PDFs or certificates;
+  - rebrand, white-label or present the platform under another product name;
+  - redistribute the platform or this repository, in whole or in part, to any third party;
+  - sublicense or resell access to the platform.
+
+The underlying OpenSign application remains under OpenSign Labs' own licence; nothing here
+grants rights to it beyond what that licence allows.
+
+Requests for permissions outside the above: info@rapidlodge.com.au

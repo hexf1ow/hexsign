@@ -1,0 +1,8 @@
+HEXSign
+Copyright (c) 2026 Hex Flow. All rights reserved.
+
+This deployment is the HEXSign platform. The platform identity is fixed by the vendor and
+must not be altered. Tenant-level customisation (organisation name, tenant logo, message
+templates, users) is permitted and expected through the in-app administration screens.
+
+Built on OpenSign (c) OpenSign Labs, used under its own licence.

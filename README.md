@@ -37,8 +37,6 @@ Live reference deployment: `https://esign.rapidlodge.com.au` (Rapid Lodgements /
 
 ```bash
 git clone <this repo> hexsign && cd hexsign
-vi config/brand.env      # product name, tenant name, domain, support email, website, certificate logo
-./scripts/rebrand.sh     # rewrite the overlay to your brand (nothing goes live)
 ./scripts/apply.sh       # deploy to your containers, restart the API, verify
 ```
 
@@ -51,13 +49,11 @@ Standing up the upstream OpenSign stack first, plus the full checklist: **[docs/
 ```
 client/client-build.tar.gz      branded SPA build (drop-in for /usr/src/app/build)
 server/                         branded server files: Utils.js, 3 mail senders, PDF + certificate engine, logos
-config/brand.env                the single file you edit per deployment
 deploy/opensign-stack.yml       recorded stack shape (images, ports, network, volume names)
 deploy/opensign.env.example     every required environment variable, values left blank
 scripts/apply.sh                deploy overlay -> containers (syntax gate, backup, restart, verify)
 scripts/ensure.sh               drift guard — re-applies branding if a rebuild wipes it (cron */15)
 scripts/verify.sh               20 live checks: health, title, logo, fonts, footer, GPS gate, no vendor strings
-scripts/rebrand.sh              rewrite the overlay for a different brand (verified to zero residual)
 scripts/backup-db.sh            mongodump of the database, 14-day retention
 scripts/backup-files.sh         document PDFs + certificates, 7-day retention
 docs/BRANDING.md                exactly what changed, file by file
@@ -75,26 +71,18 @@ Any `docker compose up --build`, image pull or container recreate reverts the si
 `scripts/apply.sh` restores the branded state; `scripts/ensure.sh` (cron) does it automatically within
 15 minutes.
 
-## Running it for your own brand
+## Branding policy — the platform is ours
 
-The overlay ships with **our** deployment values. To point it at another business, edit
-`config/brand.env` and run the rebrander — it rewrites the server files and the client build, then
-refreshes the manifest:
+HEXSign is our product. Deploying it gives you the platform **as branded**, not a white-label kit:
 
-```bash
-vi config/brand.env        # PRODUCT_NAME, TENANT_NAME, PLATFORM_URL, SUPPORT_EMAIL, WEBSITE_URL, CERT_LOGO
-./scripts/rebrand.sh       # rewrites the repo working copy only — nothing goes live
-./scripts/apply.sh         # deploy
-```
+- The product name, wordmark, logos, Arvo treatment, footer, icon colours, email and certificate
+  layouts are **fixed** and may not be removed, replaced or rebranded. See [LICENSE](LICENSE).
+- What you **can** customise is tenant-level, inside the app: your organisation name, your tenant
+  logo, your signer-facing message templates, your users and roles. That is what makes the
+  deployment yours without changing the product.
+- Redistribution, resale or presenting the platform under another name is not permitted.
 
-Verified against a fictional customer (`Acme Sign` / `sign.acme.com.au` / `help@acme.com.au`): `appName`,
-every support and complaint address, the platform hostname and the page title are all replaced, leaving
-**zero** references to the previous brand.
-
-**What this is not:** an *overlay*, not a standalone installer. You still need the upstream OpenSign
-stack running (`opensign-server`, `opensign-client`, `opensign-mongo` + env: `APP_ID`, `MASTER_KEY`,
-`SMTP_*`, `PFX_BASE64`, `PASS_PHRASE`). Admin accounts, tenants and tenant logos are **database records**
-created in-app — never in this repo — so each installation is its own.
+There is deliberately **no rebrand script** in this repository.
 
 ## Apply / repair
 
@@ -150,5 +138,5 @@ docker compose pull && docker compose up -d   # or however the stack is updated
 
 ## Licence / provenance
 
-The overlay, scripts and documentation here are ours. The application underneath is OpenSign, licensed
-by OpenSign Labs — review their terms before redistributing the application itself.
+The HEXSign branding, overlay, scripts and documentation are the property of Hex Flow — all rights
+reserved, see [LICENSE](LICENSE). The application underneath is OpenSign, licensed by OpenSign Labs.
