@@ -457,7 +457,7 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8">
  code{background:#f2f4f7;padding:1px 5px;border-radius:4px;font-size:12.5px}
 </style></head><body>
 <div class="wrap">
-  <div class="brand"><img src="/hexsign-logo.png" alt="HEXSign"></div>
+  <div class="brand"><img src="/hexsign-logo-alpha.png" alt="HEXSign"></div>
 
   <div class="card">
     <div class="bar">Google Drive connection</div>
