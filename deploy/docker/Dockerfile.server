@@ -1,0 +1,4 @@
+FROM opensign/opensignserver:main
+# the app name is HARD-CODED in Utils.js -- patch it
+RUN sed -i "s/export const appName = 'OpenSign™';/export const appName = 'HexFlow';/" /usr/src/app/Utils.js && \
+    grep -n "export const appName" /usr/src/app/Utils.js

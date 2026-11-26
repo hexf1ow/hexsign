@@ -23,7 +23,8 @@ services:
     networks: [opensign-net]
 
   opensign-server:
-    image: hexflow/opensign-server:3.0
+    # public upstream by default; override for your own build
+    image: ${OPENSIGN_SERVER_IMAGE:-opensign/opensignserver:main}
     command: npm start
     restart: unless-stopped
     depends_on: [opensign-mongo]
@@ -34,7 +35,7 @@ services:
     networks: [opensign-net]
 
   opensign-client:
-    image: hexflow/opensign-client:12.0
+    image: ${OPENSIGN_CLIENT_IMAGE:-opensign/opensign:main}
     command: npm start
     restart: unless-stopped
     env_file:

@@ -1,0 +1,8 @@
+FROM hexflow/opensign-client:1.0
+# swap the bundled OpenSign wordmark for the HexFlow wordmark
+COPY build/logo-mE-Hc8KA.png /usr/src/app/build/assets/logo-mE-Hc8KA.png
+# de-brand any remaining "OpenSign" wordmark in the JS bundle (name only, keeps functionality)
+RUN for f in /usr/src/app/build/assets/*.js; do \
+      sed -i 's/OpenSign\\xe2\\x84\\xa2/HexFlow/g; s/OpenSign™/HexFlow/g; s/OpenSign Labs/HexFlow/g' "$f" || true; \
+    done
+RUN grep -rl 'OpenSign™' /usr/src/app/build/assets/ 2>/dev/null | wc -l

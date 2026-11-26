@@ -34,8 +34,9 @@ Everything below has been run against a live instance. Nothing here contains sec
 ## 2. Bring up the upstream stack first
 
 This repo is an **overlay** — it does not ship the OpenSign application itself. Start the stock stack
-(images `hexflow/opensign-server:3.0` and `hexflow/opensign-client:12.0` in our deployment; any
-equivalent OpenSign release works the same way):
+first. `deploy/opensign-stack.yml` defaults to the public images `opensign/opensignserver:main` and
+`opensign/opensign:main`; override `OPENSIGN_SERVER_IMAGE` / `OPENSIGN_CLIENT_IMAGE` if you run your own
+build (see `deploy/docker/` for reference Dockerfiles):
 
 ```bash
 cp deploy/opensign.env.example deploy/opensign.env   # fill in your values (gitignored)
@@ -134,3 +135,6 @@ Read [`RUNBOOK.md`](RUNBOOK.md) before making changes, and note the two infrastr
 - [x] Reverse proxy route to the app
 - [x] This overlay for the branding
 - [ ] Your own logo files (SVG or ≥1200 px PNG, plus a square mark for the favicon)
+
+Everything else the platform needs — application images, database, branding build, fonts, icons,
+scripts, stack definition and environment contract — is either public upstream or in this repository.
