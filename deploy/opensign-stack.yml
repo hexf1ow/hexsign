@@ -14,6 +14,7 @@
 
 services:
   opensign-mongo:
+    container_name: opensign-mongo
     image: mongo:6
     command: mongod
     restart: unless-stopped
@@ -23,6 +24,7 @@ services:
     networks: [opensign-net]
 
   opensign-server:
+    container_name: opensign-server
     # public upstream by default; override for your own build
     image: ${OPENSIGN_SERVER_IMAGE:-opensign/opensignserver:main}
     command: npm start
@@ -35,6 +37,7 @@ services:
     networks: [opensign-net]
 
   opensign-client:
+    container_name: opensign-client
     image: ${OPENSIGN_CLIENT_IMAGE:-opensign/opensign:main}
     command: npm start
     restart: unless-stopped
@@ -43,6 +46,7 @@ services:
     networks: [opensign-net]
 
   opensign-mailpit:
+    container_name: opensign-mailpit
     image: axllent/mailpit:latest
     restart: unless-stopped
     ports:

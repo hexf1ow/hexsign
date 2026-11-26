@@ -58,8 +58,12 @@ Required environment (see `deploy/opensign.env.example` for the full list):
 Check it works before branding anything:
 
 ```bash
-curl -s https://sign.example.com/api/app/health    # expect 200
+docker ps --format '{{.Names}}' | grep opensign     # opensign-server, -client, -mongo, -mailpit
+curl -s https://sign.example.com/api/app/health     # expect 200
 ```
+
+Container names are pinned in the compose file (`container_name: opensign-server`, …), so the scripts in
+this repo address the right containers without edits.
 
 ---
 
