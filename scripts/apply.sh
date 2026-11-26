@@ -19,7 +19,7 @@ log "staging server files"
 TMP=$(mktemp -d)
 cp -a "$REPO_DIR/server/." "$TMP/"
 
-# syntax check every file before it goes anywhere near the container
+# syntax check every .js file before it goes anywhere near the container
 for f in $(cd "$TMP" && find . -type f -name '*.js'); do
   docker cp "$TMP/$f" "$SERVER:/tmp/check.js" >/dev/null
   if ! docker exec "$SERVER" node --check /tmp/check.js; then
@@ -29,14 +29,14 @@ for f in $(cd "$TMP" && find . -type f -name '*.js'); do
 done
 log "syntax OK on all server files"
 
-# backup current versions
-for f in $(cd "$TMP" && find . -type f -name '*.js'); do
+# backup current versions (every file, js or asset)
+for f in $(cd "$TMP" && find . -type f); do
   mkdir -p "$BK/server/$(dirname "$f")"
   docker cp "$SERVER:/usr/src/app/$f" "$BK/server/$f" 2>/dev/null || true
 done
 
-# copy in
-for f in $(cd "$TMP" && find . -type f -name '*.js'); do
+# copy in (every file, js or asset such as images/logo.png)
+for f in $(cd "$TMP" && find . -type f); do
   docker cp "$TMP/$f" "$SERVER:/usr/src/app/$f" >/dev/null
 done
 rm -rf "$TMP"
