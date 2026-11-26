@@ -1,30 +1,100 @@
-# HEXSign — e-signing platform (branding overlay + operations)
+# HEXSign — white-label e-signing platform
 
-`https://esign.rapidlodge.com.au` — self-hosted OpenSign, rebranded to **HEXSign** for Rapid Lodgements / Hex Flow.
+A complete **branding + operations overlay** for a self-hosted [OpenSign](https://github.com/OpenSignLabs/OpenSign)
+instance: your name, logo, font and footer across the platform, your identity in every email and on every
+completion certificate, mandatory GPS capture at signing, and scripts that stop a container rebuild from
+wiping any of it.
 
-This repo is the **source of truth for every customisation** on that platform. Upstream OpenSign images are
-left untouched; everything here is applied on top and can be re-applied at any time.
+Live reference deployment: `https://esign.rapidlodge.com.au` (Rapid Lodgements / Hex Flow).
+
+| Login | Dashboard |
+|---|---|
+| ![Login](docs/screenshots/login.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+
+| Completion certificate — GPS block + map | Signature-request email |
+|---|---|
+| ![Certificate](docs/screenshots/certificate.png) | ![Email](docs/screenshots/email.png) |
+
+---
+
+## What it does
+
+- **SPA rebrand** — page title, logo, favicon/app icons, manifest, 8 locales, 140+ strings
+- **Arvo typography** — self-hosted woff2 (no Google Fonts call); Font Awesome deliberately untouched
+- **Footer bar** — "Powered by … · … · yoursite.com", hidden when printing
+- **Coloured icons** — per-item sidebar colours, true brand colours on the social row
+- **Emails** — all three senders (request, batch, system) carry your logo, footer and complaint address;
+  zero vendor branding anywhere
+- **Certificate** — your logo, navy layout, GPS coordinates, accuracy, OpenStreetMap thumbnail with pin,
+  SHA-256, audit trail, `Digitally signed by …` signature block
+- **GPS gate** — blocking location card on signing links only, never on the login page
+- **Operations** — `apply.sh` (deploy + verify), `ensure.sh` (self-heal), `verify.sh` (20 live checks),
+  nightly database and document-file backups
+
+---
+
+## Quick start
+
+```bash
+git clone <this repo> hexsign && cd hexsign
+vi config/brand.env      # product name, tenant name, domain, support email, website, certificate logo
+./scripts/rebrand.sh     # rewrite the overlay to your brand (nothing goes live)
+./scripts/apply.sh       # deploy to your containers, restart the API, verify
+```
+
+Standing up the upstream OpenSign stack first, plus the full checklist: **[docs/INSTALL.md](docs/INSTALL.md)**.
+
+---
+
+## Repository layout
+
+```
+client/client-build.tar.gz      branded SPA build (drop-in for /usr/src/app/build)
+server/                         branded server files: Utils.js, 3 mail senders, PDF + certificate engine, logos
+config/brand.env                the single file you edit per deployment
+deploy/opensign-stack.yml       recorded stack shape (images, ports, network, volume names)
+deploy/opensign.env.example     every required environment variable, values left blank
+scripts/apply.sh                deploy overlay -> containers (syntax gate, backup, restart, verify)
+scripts/ensure.sh               drift guard — re-applies branding if a rebuild wipes it (cron */15)
+scripts/verify.sh               20 live checks: health, title, logo, fonts, footer, GPS gate, no vendor strings
+scripts/rebrand.sh              rewrite the overlay for a different brand (verified to zero residual)
+scripts/backup-db.sh            mongodump of the database, 14-day retention
+scripts/backup-files.sh         document PDFs + certificates, 7-day retention
+docs/BRANDING.md                exactly what changed, file by file
+docs/INSTALL.md                 install on your own server, end to end
+docs/RUNBOOK.md                 day-2 operations, rollback, restore
+```
+
+---
 
 ## Why this repo exists
 
 The platform runs from stock `opensign-server` / `opensign-client` images with **no volumes for code**.
 Any `docker compose up --build`, image pull or container recreate reverts the site to upstream OpenSign
-(OpenSign logo, "OpenSign" wording, no Arvo font, no footer, GPS gate on the login page).
-`scripts/apply.sh` restores the branded state; `scripts/ensure.sh` (cron) does it automatically.
+(OpenSign logo, "OpenSign" wording, no Arvo, no footer, GPS gate on the login page).
+`scripts/apply.sh` restores the branded state; `scripts/ensure.sh` (cron) does it automatically within
+15 minutes.
 
-## Layout
+## Running it for your own brand
 
+The overlay ships with **our** deployment values. To point it at another business, edit
+`config/brand.env` and run the rebrander — it rewrites the server files and the client build, then
+refreshes the manifest:
+
+```bash
+vi config/brand.env        # PRODUCT_NAME, TENANT_NAME, PLATFORM_URL, SUPPORT_EMAIL, WEBSITE_URL, CERT_LOGO
+./scripts/rebrand.sh       # rewrites the repo working copy only — nothing goes live
+./scripts/apply.sh         # deploy
 ```
-client/client-build.tar.gz   branded SPA build (HexSign logo, Arvo fonts, footer, route-guarded GPS hook, icon colours)
-server/Utils.js              appName='HexSign', HexSign logo in mail template, navy header
-server/cloud/parsefunction/  mail + PDF functions rebranded (footer, signature reason, map user-agent)
-scripts/apply.sh             deploy the overlay to a running platform (backs up first, verifies after)
-scripts/ensure.sh            drift guard — re-applies if branding is missing (safe to cron)
-scripts/verify.sh            proof the live platform is healthy and branded
-scripts/backup-db.sh         mongodump of the opensign database, 14-day retention
-docs/BRANDING.md             exactly what was changed and where
-docs/RUNBOOK.md              day-2 operations
-```
+
+Verified against a fictional customer (`Acme Sign` / `sign.acme.com.au` / `help@acme.com.au`): `appName`,
+every support and complaint address, the platform hostname and the page title are all replaced, leaving
+**zero** references to the previous brand.
+
+**What this is not:** an *overlay*, not a standalone installer. You still need the upstream OpenSign
+stack running (`opensign-server`, `opensign-client`, `opensign-mongo` + env: `APP_ID`, `MASTER_KEY`,
+`SMTP_*`, `PFX_BASE64`, `PASS_PHRASE`). Admin accounts, tenants and tenant logos are **database records**
+created in-app — never in this repo — so each installation is its own.
 
 ## Apply / repair
 
@@ -37,8 +107,9 @@ docs/RUNBOOK.md              day-2 operations
 Installed cron:
 
 ```
-*/15 * * * *  /home/superuser/hexsign/scripts/ensure.sh          # self-heal after any rebuild
-30 2 * * *    /home/superuser/hexsign/scripts/backup-db.sh       # nightly database dump
+*/15 * * * *  /home/superuser/hexsign/scripts/ensure.sh        # self-heal after any rebuild
+30 2 * * *    /home/superuser/hexsign/scripts/backup-db.sh     # nightly database dump
+0  3 * * *    /home/superuser/hexsign/scripts/backup-files.sh  # nightly document archive
 ```
 
 ## After any image update
@@ -49,40 +120,17 @@ docker compose pull && docker compose up -d   # or however the stack is updated
 /home/superuser/hexsign/scripts/verify.sh
 ```
 
-
-## Running this for your own brand
-
-The overlay ships with **our** deployment values. To point it at another business, edit
-`config/brand.env` and run the rebrander — it rewrites the server files and the client build,
-then refreshes the manifest:
-
-```bash
-vi config/brand.env        # PRODUCT_NAME, TENANT_NAME, PLATFORM_URL, SUPPORT_EMAIL, WEBSITE_URL, CERT_LOGO
-./scripts/rebrand.sh       # rewrites repo working copy only — nothing goes live
-./scripts/apply.sh         # deploy
-```
-
-Verified: setting it to a fictional customer (`Acme Sign` / `sign.acme.com.au` / `help@acme.com.au`)
-replaces `appName`, every support/complaint address, the platform hostname and the page title, leaving
-**zero** references to the previous brand.
-
-**What this repo is not:** it is an *overlay*, not a standalone installer. You still need the upstream
-OpenSign stack running (`opensign-server`, `opensign-client`, `opensign-mongo` + env: `APP_ID`,
-`MASTER_KEY`, `SMTP_*`, `PFX_BASE64`, `PASS_PHRASE`). The admin account, tenant name and tenant logo
-are database records, created in-app — not code, and never in this repo.
-
-
 ## Infrastructure reality (important)
 
-- The containers were created with `docker run`, not compose. `deploy/opensign-stack.yml` now records the
-  real shape (images, ports, network `opensign-stack_opensign-net`, volume names) so the stack is rebuildable.
+- The containers were created with `docker run`, not compose. `deploy/opensign-stack.yml` records the real
+  shape (images, ports, network `opensign-stack_opensign-net`, volume names) so the stack is rebuildable.
   Secrets are **not** in git — they live in `/home/superuser/.hermes/private/opensign.env` (mode 600).
 - **`/usr/src/app/files` (all signed PDFs + certificates, ~70 MB, 142 files) is inside the `opensign-server`
-  container, not on a volume.** Recreating that container would destroy them. Mitigations in place:
-  nightly archive (`scripts/backup-files.sh`, 03:00, 7-day retention). Proper fix = migrate to a named
-  volume, which needs one container recreate.
-- `esign.rapidlodge.com.au` is routed by Caddy config stored in the `caddy-config` volume (API-written,
-  not in the on-disk Caddyfile). Back it up before touching Caddy.
+  container, not on a volume.** Recreating that container would destroy them. Mitigation in place: nightly
+  archive (`scripts/backup-files.sh`, 03:00, 7-day retention). Proper fix = migrate to a named volume,
+  which needs one container recreate.
+- `esign.rapidlodge.com.au` is routed by Caddy config stored in the `caddy-config` volume (API-written, not
+  the on-disk Caddyfile). Back it up before touching Caddy.
 
 ## Backups
 
@@ -99,3 +147,8 @@ are database records, created in-app — not code, and never in this repo.
   `/home/superuser/esign-patches/apply-<stamp>/` and leaves the previous build as
   `/usr/src/app/build.previous` inside the client container.
 - Emails already sent cannot be rebranded retroactively.
+
+## Licence / provenance
+
+The overlay, scripts and documentation here are ours. The application underneath is OpenSign, licensed
+by OpenSign Labs — review their terms before redistributing the application itself.

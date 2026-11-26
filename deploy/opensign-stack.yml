@@ -2,9 +2,10 @@
 # There was no compose file on the box: the containers were started with `docker run`.
 # This file records the real shape so the stack can be rebuilt identically.
 #
-# Secrets live OUTSIDE git: /home/superuser/.hermes/private/opensign.env (mode 600).
+# Secrets live OUTSIDE git: deploy/opensign.env (gitignored) - copy it from opensign.env.example.
 # Usage:
-#   docker compose -f deploy/opensign-stack.yml --env-file ~/.hermes/private/opensign.env up -d
+#   cp deploy/opensign.env.example deploy/opensign.env && vi deploy/opensign.env
+#   docker compose -f deploy/opensign-stack.yml up -d
 #
 # WARNING: files/ (all signed PDFs and certificates, ~70 MB, 142 files) are currently INSIDE
 # the opensign-server container, not on a volume. Until they are migrated, recreating that
@@ -27,7 +28,7 @@ services:
     restart: unless-stopped
     depends_on: [opensign-mongo]
     env_file:
-      - ../../.hermes/private/opensign.env
+      - ./opensign.env
     ports:
       - "8588:8080"
     networks: [opensign-net]
@@ -37,7 +38,7 @@ services:
     command: npm start
     restart: unless-stopped
     env_file:
-      - ../../.hermes/private/opensign.env
+      - ./opensign.env
     networks: [opensign-net]
 
   opensign-mailpit:

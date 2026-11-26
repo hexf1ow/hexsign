@@ -32,8 +32,8 @@ docker exec -i opensign-mongo sh -c 'mongorestore --archive --gzip --drop --nsIn
 
 ## Logins
 
-- Admin: `nafees.m@rapidlodge.com.au` (display name "Rapid Admin"), lands on `/dashboard/<tenantId>`
-- All outbound mail leaves from `info@rapidlodge.com.au` (server env `SMTP_USER_EMAIL`); the admin account plays no part in sending.
+- Admin: the tenant admin account (in our deployment: display name "Rapid Admin"), lands on `/dashboard/<tenantId>`
+- All outbound mail leaves from `SMTP_USER_EMAIL`; the admin account plays no part in sending.
 
 ## Do not
 
