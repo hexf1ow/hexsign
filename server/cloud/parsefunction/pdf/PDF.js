@@ -154,6 +154,9 @@ async function updateDoc(
 async function sendNotifyMail(doc, signUser, mailProvider, publicUrl) {
   try {
     const TenantAppName = appName;
+    // Sender display name follows the user's preference "use profile name as sender".
+    const _ns = doc?.ExtUserPtr || {};
+    const FromName = _ns.UseNameAsSender === true && _ns.Name ? _ns.Name : appName;
     const logo =
       "<img src='https://esign.rapidlodge.com.au/hexsign-logo.png' height='50' style='padding:20px'/>";
 
@@ -181,7 +184,7 @@ async function sendNotifyMail(doc, signUser, mailProvider, publicUrl) {
 
       const params = {
         extUserId: sender.objectId,
-        from: TenantAppName,
+        from: FromName,
         recipient: creatorEmail,
         subject: subject,
         pdfName: pdfName,
@@ -202,6 +205,9 @@ async function sendCompletedMail(obj) {
   const sender = obj.doc.ExtUserPtr;
   const pdfName = doc.Name;
   const TenantAppName = appName;
+  // Sender display name follows "use profile name as sender"; app name is the default.
+  const FromName =
+    sender?.UseNameAsSender === true && sender?.Name ? sender.Name : appName;
   const logo =
     "<img src='https://esign.rapidlodge.com.au/hexsign-logo.png' height='50' style='padding:20px'/>";
 
@@ -285,7 +291,7 @@ async function sendCompletedMail(obj) {
   const params = {
     extUserId: sender.objectId,
     url: url,
-    from: doc?.SenderName || TenantAppName,
+    from: doc?.SenderName || FromName,
     replyto: doc?.SenderMail || doc?.ExtUserPtr?.Email || '',
     recipient: recipient,
     subject: subject,

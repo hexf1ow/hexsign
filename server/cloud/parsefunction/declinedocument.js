@@ -32,7 +32,7 @@ async function sendDeclineMail(doc, publicUrl, userId, reason) {
 
     const params = {
       extUserId: sender.objectId,
-      from: TenantAppName,
+      from: sender?.UseNameAsSender === true && sender?.Name ? sender.Name : TenantAppName,
       recipient: creatorEmail,
       subject: subject,
       pdfName: pdfName,
