@@ -56,3 +56,4 @@ Backups of pre-change files exist next to each as `*.bak-beforehexsign`, and ins
 - Logo source is **1191×624 px** (raster, JPEG-derived) — served at 600 px wide for weight. SVG would be crisper if the designer has it.
 - Icon colours are applied by a runtime script, not compiled into the build.
 - Arvo ships 400/700 only; weights 300/500/600 fall back to 400.
+| Fixed footer bar | `#hex-footer` in `index.html` | Platform pages only — hidden automatically on signing routes (`/load/…`, `/form/…`) so it never overlaps the signing view or doubles the platform's own footer |
