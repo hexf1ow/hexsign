@@ -1,0 +1,62 @@
+# HEXSign / OpenSign stack — reconstructed definition of what is actually running.
+# There was no compose file on the box: the containers were started with `docker run`.
+# This file records the real shape so the stack can be rebuilt identically.
+#
+# Secrets live OUTSIDE git: /home/superuser/.hermes/private/opensign.env (mode 600).
+# Usage:
+#   docker compose -f deploy/opensign-stack.yml --env-file ~/.hermes/private/opensign.env up -d
+#
+# WARNING: files/ (all signed PDFs and certificates, ~70 MB, 142 files) are currently INSIDE
+# the opensign-server container, not on a volume. Until they are migrated, recreating that
+# container loses them. Nightly archive: /home/superuser/esign-backups/files/
+# After migrating to the volume below, set:  - ./data/files:/usr/src/app/files
+
+services:
+  opensign-mongo:
+    image: mongo:6
+    command: mongod
+    restart: unless-stopped
+    volumes:
+      - opensign-data:/data/db
+      - opensign-configdb:/data/configdb
+    networks: [opensign-net]
+
+  opensign-server:
+    image: hexflow/opensign-server:3.0
+    command: npm start
+    restart: unless-stopped
+    depends_on: [opensign-mongo]
+    env_file:
+      - ../../.hermes/private/opensign.env
+    ports:
+      - "8588:8080"
+    networks: [opensign-net]
+
+  opensign-client:
+    image: hexflow/opensign-client:12.0
+    command: npm start
+    restart: unless-stopped
+    env_file:
+      - ../../.hermes/private/opensign.env
+    networks: [opensign-net]
+
+  opensign-mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "8587:8025"
+    volumes:
+      - mailpit-data:/data
+    networks: [opensign-net]
+
+volumes:
+  opensign-data:
+    name: opensign-stack_opensign-data
+  opensign-configdb:
+    name: opensign-stack_opensign-configdb
+  mailpit-data:
+    name: opensign-stack_mailpit-data
+
+networks:
+  opensign-net:
+    name: opensign-stack_opensign-net

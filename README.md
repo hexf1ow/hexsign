@@ -71,6 +71,27 @@ OpenSign stack running (`opensign-server`, `opensign-client`, `opensign-mongo` +
 `MASTER_KEY`, `SMTP_*`, `PFX_BASE64`, `PASS_PHRASE`). The admin account, tenant name and tenant logo
 are database records, created in-app — not code, and never in this repo.
 
+
+## Infrastructure reality (important)
+
+- The containers were created with `docker run`, not compose. `deploy/opensign-stack.yml` now records the
+  real shape (images, ports, network `opensign-stack_opensign-net`, volume names) so the stack is rebuildable.
+  Secrets are **not** in git — they live in `/home/superuser/.hermes/private/opensign.env` (mode 600).
+- **`/usr/src/app/files` (all signed PDFs + certificates, ~70 MB, 142 files) is inside the `opensign-server`
+  container, not on a volume.** Recreating that container would destroy them. Mitigations in place:
+  nightly archive (`scripts/backup-files.sh`, 03:00, 7-day retention). Proper fix = migrate to a named
+  volume, which needs one container recreate.
+- `esign.rapidlodge.com.au` is routed by Caddy config stored in the `caddy-config` volume (API-written,
+  not in the on-disk Caddyfile). Back it up before touching Caddy.
+
+## Backups
+
+| What | When | Where | Retention |
+|---|---|---|---|
+| Mongo database | 02:30 daily | `/home/superuser/esign-backups/opensign_*.gz` | 14 days |
+| Document files (PDFs) | 03:00 daily | `/home/superuser/esign-backups/files/esign-files_*.tgz` | 7 days |
+| Container env/secrets | on demand | `~/.hermes/private/opensign.env` (600) | — |
+
 ## Rules
 
 - Never edit files directly inside the containers and leave them there — change the repo, then `apply.sh`.
