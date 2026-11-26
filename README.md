@@ -49,6 +49,28 @@ docker compose pull && docker compose up -d   # or however the stack is updated
 /home/superuser/hexsign/scripts/verify.sh
 ```
 
+
+## Running this for your own brand
+
+The overlay ships with **our** deployment values. To point it at another business, edit
+`config/brand.env` and run the rebrander — it rewrites the server files and the client build,
+then refreshes the manifest:
+
+```bash
+vi config/brand.env        # PRODUCT_NAME, TENANT_NAME, PLATFORM_URL, SUPPORT_EMAIL, WEBSITE_URL, CERT_LOGO
+./scripts/rebrand.sh       # rewrites repo working copy only — nothing goes live
+./scripts/apply.sh         # deploy
+```
+
+Verified: setting it to a fictional customer (`Acme Sign` / `sign.acme.com.au` / `help@acme.com.au`)
+replaces `appName`, every support/complaint address, the platform hostname and the page title, leaving
+**zero** references to the previous brand.
+
+**What this repo is not:** it is an *overlay*, not a standalone installer. You still need the upstream
+OpenSign stack running (`opensign-server`, `opensign-client`, `opensign-mongo` + env: `APP_ID`,
+`MASTER_KEY`, `SMTP_*`, `PFX_BASE64`, `PASS_PHRASE`). The admin account, tenant name and tenant logo
+are database records, created in-app — not code, and never in this repo.
+
 ## Rules
 
 - Never edit files directly inside the containers and leave them there — change the repo, then `apply.sh`.
