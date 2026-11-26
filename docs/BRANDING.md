@@ -9,7 +9,8 @@ Platform: `https://esign.rapidlodge.com.au` (self-hosted OpenSign, containers `o
 | `HexFlow` → `HexSign` (142 strings, 19 files incl. 8 locales) | `assets/*.js`, `locales/*/translation.json`, `manifest.json` |
 | `OpenSign™ Drive` → `HexSign™ Drive` | `assets/main-*.js`, 8 locale files |
 | Page title `Rapid Lodgements` → `HexSign` | `index.html` |
-| Tenant logo → `/hexsign-logo.png` | `index.html` + Mongo `partners_Tenant.Logo` |
+| Tenant logo → `/hexsign-logo.png` (1191×624 source, served 600×314) | `index.html` + Mongo `partners_Tenant.Logo` |
+| Favicon / app icons → HEXSign wordmark | `favicon.ico` (16–256), `logo192.png`, `apple-touch-icon.png` |
 | Footer bar: "Powered by HEXSign · Localised secure signing platform · hexflow.com.au" | `index.html` (`#hex-footer`, hidden on print) |
 | Arvo typeface, self-hosted (400/700/400-italic) | `fonts/arvo-*.woff2` + `#hex-arvo-font` style |
 | Font rule excludes every Font Awesome element (icons stay on `Font Awesome 6 Pro`) | same style block |
@@ -46,6 +47,6 @@ Backups of pre-change files exist next to each as `*.bak-beforehexsign`, and ins
 
 ## Known cosmetic debt
 
-- Source logo is only **350×200 px** — soft on large screens. Replace with SVG or ≥1200 px PNG.
+- Logo source is **1191×624 px** (raster, JPEG-derived) — served at 600 px wide for weight. SVG would be crisper if the designer has it.
 - Icon colours are applied by a runtime script, not compiled into the build.
 - Arvo ships 400/700 only; weights 300/500/600 fall back to 400.
