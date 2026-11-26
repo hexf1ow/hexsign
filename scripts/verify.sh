@@ -13,7 +13,8 @@ chk "Arvo font served"  "$(curl -s -o /dev/null -w '%{http_code}' $BASE/fonts/ar
 chk "footer present"    "$([ "$(curl -s $BASE/ | grep -o 'hex-footer' | wc -l)" -ge 1 ] && echo yes || echo no)" "yes"
 chk "arvo css present"  "$(curl -s $BASE/ | grep -c 'hex-arvo-font')" "1"
 chk "icon colours"      "$(curl -s $BASE/ | grep -c 'hex-icon-colors')" "1"
-chk "geo route guard"   "$(curl -s $BASE/ | grep -c 'recipientSignPdf.*test(location.pathname)\|location.pathname' | head -1)" "1"
+chk "geo route guard"   "$(curl -s $BASE/ | grep -q '__hexRouteWatched' && echo yes || echo no)" "yes"
+chk "footer off when signing" "$(curl -s $BASE/ | grep -q 'hex-nofooter' && echo yes || echo no)" "yes"
 chk "no HexFlow brand"  "$(curl -s $BASE/ | grep -o 'HexFlow' | wc -l)" "0"
 
 echo "--- containers ---"
