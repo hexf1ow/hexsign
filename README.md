@@ -71,6 +71,12 @@ Any `docker compose up --build`, image pull or container recreate reverts the si
 `scripts/apply.sh` restores the branded state; `scripts/ensure.sh` (cron) does it automatically within
 15 minutes.
 
+## Tenant email templates
+
+The signature-request and completion emails live in the database, per tenant.
+Shipped defaults are in `deploy/tenant/`, applied with
+`./scripts/apply-tenant-templates.sh` — see [docs/TENANT-TEMPLATES.md](docs/TENANT-TEMPLATES.md).
+
 ## Branding policy — the platform is ours
 
 HEXSign is our product. Deploying it gives you the platform **as branded**, not a white-label kit:

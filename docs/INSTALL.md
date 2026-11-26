@@ -140,3 +140,14 @@ Read [`RUNBOOK.md`](RUNBOOK.md) before making changes, and note the two infrastr
 
 Everything else the platform needs — application images, database, branding build, fonts, icons,
 scripts, stack definition and environment contract — is either public upstream or in this repository.
+
+## 7. Tenant email templates
+
+Apply the shipped signature-request and completion emails to your tenant:
+
+```bash
+./scripts/apply-tenant-templates.sh
+```
+
+They are tenant data — replace the signature block, phone numbers and logos with your own.
+Details: [TENANT-TEMPLATES.md](TENANT-TEMPLATES.md)
