@@ -12,6 +12,26 @@ Supported: **Google Drive** (My Drive folder or Shared drive).
 OneDrive / Dropbox are not implemented — the same script can be extended by swapping
 the Google client for the Microsoft Graph client.
 
+
+## 0. Connect it from inside the platform (recommended)
+
+No server work, no cron, no container sidecar:
+
+1. Sign in to the platform as a tenant admin.
+2. **Settings → Drive** (the page lives at `/api/drive-admin`).
+3. Paste a **service-account key** (or an OAuth token JSON containing `refresh_token`),
+   type the Shared drive name, keep the folders as `Documents,Signed`, hit **Connect drive**.
+   The page checks the credentials with Google before saving them and creates the folders.
+4. The page then shows the account, drive, folders, **last sync** and last result, with
+   **Sync now** and **Disconnect**.
+
+The sync then runs **inside the platform server** every 10 minutes
+(`DRIVE_INTERVAL_SECONDS`, default 600) — the same process that serves the app, so there is
+nothing extra to keep alive and no Docker socket involved.
+
+Configuration is stored in the `hexsign_DriveConfig` class in MongoDB, one row per install.
+Every call to the page's API requires a valid platform session token.
+
 ---
 
 ## 1. Credentials — use a service account, not a person
