@@ -7,10 +7,12 @@
 #   cp deploy/opensign.env.example deploy/opensign.env && vi deploy/opensign.env
 #   docker compose -f deploy/opensign-stack.yml up -d
 #
-# WARNING: files/ (all signed PDFs and certificates, ~70 MB, 142 files) are currently INSIDE
-# the opensign-server container, not on a volume. Until they are migrated, recreating that
-# container loses them. Nightly archive: /home/superuser/esign-backups/files/
-# After migrating to the volume below, set:  - ./data/files:/usr/src/app/files
+# Documents live in the opensign-files volume (mounted at /usr/src/app/files), so they
+# survive container recreates and can be read by the drive-sync sidecar.
+# EXISTING INSTALLS: the volume is empty on first `up` — copy the old files in first:
+#   docker cp opensign-server:/usr/src/app/files/. /tmp/files-backup/   # before recreating
+#   docker cp /tmp/files-backup/. opensign-server:/usr/src/app/files/   # after
+# See docs/DRIVE.md for the cloud-drive mirror and docs/INSTALL.md for migration.
 
 services:
   opensign-mongo:
@@ -34,6 +36,8 @@ services:
       - ./opensign.env
     ports:
       - "8588:8080"
+    volumes:
+      - opensign-files:/usr/src/app/files
     networks: [opensign-net]
 
   opensign-client:
@@ -43,6 +47,25 @@ services:
     restart: unless-stopped
     env_file:
       - ./opensign.env
+    networks: [opensign-net]
+
+  # Optional: mirror stored documents into Google Drive / a Shared drive.
+  # Enable with:  docker compose --profile drive -f deploy/opensign-stack.yml up -d
+  drive-sync:
+    container_name: opensign-drive-sync
+    build:
+      context: ..
+      dockerfile: deploy/drive-sync/Dockerfile
+    image: hexsign/drive-sync:latest
+    restart: unless-stopped
+    profiles: ["drive"]
+    env_file:
+      - ./opensign.env
+    environment:
+      DRIVE_SOURCE: /data/files
+    volumes:
+      - opensign-files:/data/files:ro
+      - ${DRIVE_CREDENTIALS_DIR:-./credentials}:/credentials:ro
     networks: [opensign-net]
 
   opensign-mailpit:
@@ -56,6 +79,7 @@ services:
     networks: [opensign-net]
 
 volumes:
+  opensign-files:
   opensign-data:
     name: opensign-stack_opensign-data
   opensign-configdb:

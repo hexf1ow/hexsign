@@ -77,6 +77,12 @@ The signature-request and completion emails live in the database, per tenant.
 Shipped defaults are in `deploy/tenant/`, applied with
 `./scripts/apply-tenant-templates.sh` — see [docs/TENANT-TEMPLATES.md](docs/TENANT-TEMPLATES.md).
 
+## Cloud drive mirror (optional)
+
+Mirror stored documents into a Google Drive / Shared drive as a compose sidecar or a
+systemd service — service-account credentials, one-way and additive.
+Setup: [docs/DRIVE.md](docs/DRIVE.md)
+
 ## Branding policy — the platform is ours
 
 HEXSign is our product. Deploying it gives you the platform **as branded**, not a white-label kit:

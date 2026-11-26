@@ -151,3 +151,14 @@ Apply the shipped signature-request and completion emails to your tenant:
 
 They are tenant data — replace the signature block, phone numbers and logos with your own.
 Details: [TENANT-TEMPLATES.md](TENANT-TEMPLATES.md)
+
+## 8. Cloud drive mirror (optional)
+
+Connect the platform to a Google Drive or Shared drive:
+
+```bash
+mkdir -p deploy/credentials   # put your service-account key here
+docker compose --profile drive -f deploy/opensign-stack.yml up -d
+```
+
+Full setup, credentials and troubleshooting: [DRIVE.md](DRIVE.md)
