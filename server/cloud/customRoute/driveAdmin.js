@@ -429,7 +429,7 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8">
  body{margin:0;font:15px/1.6 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2430;background:#f4f5f7}
  .wrap{max-width:760px;margin:0 auto;padding:28px 18px 60px}
  .brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}
- .brand img{height:42px}
+ .brand img{height:58px;width:auto}
  .card{background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(17,35,102,.10);overflow:hidden;margin-bottom:18px}
  .bar{background:var(--navy);color:#fff;padding:14px 22px;font-weight:600}
  .body{padding:20px 22px}
@@ -457,7 +457,7 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8">
  code{background:#f2f4f7;padding:1px 5px;border-radius:4px;font-size:12.5px}
 </style></head><body>
 <div class="wrap">
-  <div class="brand"><img src="/hexsign-logo-alpha.png" alt="HEXSign"></div>
+  <div class="brand"><img src="/hexsign-logo-tagline.png" alt="HEXSign — Localised Secure Signing"></div>
 
   <div class="card">
     <div class="bar">Google Drive connection</div>
